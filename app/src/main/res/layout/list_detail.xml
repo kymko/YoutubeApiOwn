@@ -74,7 +74,7 @@
             android:layout_marginTop="4sp"
             android:layout_toEndOf="@id/rl_image"
             android:fontFamily="@font/nato_sans"
-            android:text="@string/_32_video_series"
+            android:text="@string/how_long_video"
             android:textColor="#151515"
             android:textSize="12sp" />
 

@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -14,11 +15,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.YoutubeApi">
         <activity
+            android:configChanges="orientation|screenSize|layoutDirection"
+            android:name=".ui.player.PlayerActivity"
+            android:exported="true" />
+        <activity
             android:name=".ui.detail.DetailActivity"
             android:exported="true">
 
         </activity>
-
         <activity
             android:name=".ui.playlist.PlayListActivity"
             android:exported="true">
@@ -27,7 +31,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
         <meta-data

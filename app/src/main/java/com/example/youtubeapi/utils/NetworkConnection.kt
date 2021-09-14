@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.*
 import android.os.Build
+import android.os.Build.VERSION_CODES.LOLLIPOP
 import android.os.Build.VERSION_CODES.N
 import androidx.lifecycle.LiveData
 import android.net.NetworkInfo as NetworkInfo
@@ -27,10 +28,9 @@ class NetworkConnection(private val context: Context) : LiveData<Boolean>() {
 
                 connectivityManager.registerDefaultNetworkCallback(connectivityManagerCallback())
             }
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> {
+            Build.VERSION.SDK_INT >= LOLLIPOP -> {
                 lollipopNetworkRequest()
             }
-
 
             else -> {
 
@@ -45,7 +45,7 @@ class NetworkConnection(private val context: Context) : LiveData<Boolean>() {
 
     override fun onInactive() {
         super.onInactive()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= LOLLIPOP) {
             connectivityManager.unregisterNetworkCallback(connectivityManagerCallback())
 
         } else {
@@ -54,7 +54,7 @@ class NetworkConnection(private val context: Context) : LiveData<Boolean>() {
     }
 
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @TargetApi(LOLLIPOP)
     private fun lollipopNetworkRequest() {
         val requestBuilder = NetworkRequest.Builder()
             .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
@@ -67,7 +67,7 @@ class NetworkConnection(private val context: Context) : LiveData<Boolean>() {
     }
 
     fun connectivityManagerCallback(): ConnectivityManager.NetworkCallback {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= LOLLIPOP) {
             networkCallback = object : ConnectivityManager.NetworkCallback() {
 
                 override fun onLost(network: Network) {

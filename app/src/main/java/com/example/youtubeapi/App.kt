@@ -1,7 +1,7 @@
 package com.example.youtubeapi
 
 import android.app.Application
-import com.example.youtubeapi.ui.playlist.repository.Repository
+import com.example.youtubeapi.ui.repository.Repository
 
 class App: Application() {
 

@@ -1,6 +1,6 @@
 package com.example.youtubeapi.core.network
 
-class Resource<T>(val status: Status, val data: T?, val message: String?, val code: Int?) {
+class Resource<out T>(val status: Status, val data: T?, val message: String?, val code: Int?) {
 
     companion object {
         fun <T> success(data: T?, code: Int): Resource<T> {
@@ -12,7 +12,7 @@ class Resource<T>(val status: Status, val data: T?, val message: String?, val co
         }
 
         fun <T> loading(data: T?): Resource<T> {
-            return Resource(Status.LOADING, data,null,null)
+            return Resource(Status.LOADING, data, null, null)
         }
     }
 }

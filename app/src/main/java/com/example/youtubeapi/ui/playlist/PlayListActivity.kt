@@ -9,14 +9,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.youtubeapi.core.network.Status
 import com.example.youtubeapi.core.ui.BaseActivity
 import com.example.youtubeapi.databinding.ActivityPlayListBinding
-import com.example.youtubeapi.model.PlayListItems
+import com.example.youtubeapi.model.PlayListJs
 import com.example.youtubeapi.ui.detail.DetailActivity
 import com.example.youtubeapi.ui.playlist.adapter.PlayListAdapter
 
 class PlayListActivity : BaseActivity<ActivityPlayListBinding>() {
 
     private var viewModel: PlayListViewModel? = null
-    private val playListAdapter : PlayListAdapter by lazy { PlayListAdapter() }
+    private val playListAdapter: PlayListAdapter by lazy { PlayListAdapter(this::clickListener) }
 
     override fun setupUI() {
         viewModel = ViewModelProvider(this).get(PlayListViewModel::class.java)
@@ -26,14 +26,14 @@ class PlayListActivity : BaseActivity<ActivityPlayListBinding>() {
 
         viewModel?.fetchAllPlayLists()?.observe(this) {
 
-            when(it.status){
+            when (it.status) {
                 Status.SUCCESS -> {
                     binding.progress.visibility = View.GONE
-                    playListAdapter.addPlayList(it.data?.items)
+                    playListAdapter.addPlayList(it.data?.items as ArrayList<PlayListJs.Item>?)
                 }
                 Status.ERROR -> {
                     binding.progress.visibility = View.GONE
-                    Toast.makeText(this,it.message,Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
                 }
                 Status.LOADING -> {
                     binding.progress.visibility = View.VISIBLE
@@ -45,14 +45,13 @@ class PlayListActivity : BaseActivity<ActivityPlayListBinding>() {
             layoutManager = LinearLayoutManager(this@PlayListActivity)
             adapter = playListAdapter
         }
-        playListAdapter.setOnItemClickListener(object : PlayListAdapter.OnItemClickListener{
-            override fun onItemClick(playList: PlayListItems?) {
-                val intent = Intent(this@PlayListActivity,DetailActivity::class.java)
-                intent.putExtra("key",playList?.snippet?.title)
-                startActivity(intent)
-            }
+    }
 
-        })
+    private fun clickListener(playListJs: PlayListJs.Item){
+        Intent(this@PlayListActivity, DetailActivity::class.java).apply {
+            putExtra("key", playListJs.snippet.title)
+            startActivity(this)
+        }
     }
 
 
@@ -76,12 +75,3 @@ class PlayListActivity : BaseActivity<ActivityPlayListBinding>() {
         return ActivityPlayListBinding.inflate(layoutInflater)
     }
 }
-
-
-//1. Создать свой ApiKey и ознакомиться с документацией
-//2. Добавить в класс playlist поле "items", отрисовать первых 2 экрана из фигмы (Проверка на интернет, и список всех PlayList)
-//3. сделать переход на новую активити и передаете туда id и её отображаете тостом
-//
-//Также прочитайте про корутины желательно
-//
-//Доп: в PlayListActivity попробуйте реализовать пагинацию с помощью ViewType с RecyclerView

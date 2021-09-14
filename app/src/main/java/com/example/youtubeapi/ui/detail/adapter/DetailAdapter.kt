@@ -5,19 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.youtubeapi.databinding.ListDetailBinding
-import com.example.youtubeapi.databinding.ListItemBinding
 import com.example.youtubeapi.extensions.load
-import com.example.youtubeapi.model.PlayListItems
+import com.example.youtubeapi.model.PlayListItem
 
-class DetailAdapter :RecyclerView.Adapter<DetailAdapter.ViewHolder>() {
+class DetailAdapter(private val clickListener:(item:PlayListItem.Item)->Unit)
+    : RecyclerView.Adapter<DetailAdapter.ViewHolder>() {
 
     private lateinit var binding: ListDetailBinding
-    private val playList:ArrayList<PlayListItems> = arrayListOf()
+    private val playList: ArrayList<PlayListItem.Item> = arrayListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ListDetailBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+        binding = ListDetailBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding.root)
     }
 
@@ -29,7 +28,7 @@ class DetailAdapter :RecyclerView.Adapter<DetailAdapter.ViewHolder>() {
         return playList.size
     }
 
-    fun addPlayList(list: ArrayList<PlayListItems>?){
+    fun addPlayList(list: ArrayList<PlayListItem.Item>?) {
         if (list != null) {
             playList.addAll(list)
         }
@@ -41,13 +40,16 @@ class DetailAdapter :RecyclerView.Adapter<DetailAdapter.ViewHolder>() {
 
         var binding: ListDetailBinding = ListDetailBinding.bind(itemView)
 
-        fun onBind(playList: PlayListItems?) {
+        fun onBind(playList: PlayListItem.Item) {
 
-            Log.d("tag","titleSnip: ${playList?.snippet?.title}")
-            binding.tvHeader.text = playList?.snippet?.title
-            binding.imageView.load(playList?.snippet?.thumbnails?.default?.url.toString())
-            Log.d("tag","series : "+playList?.contentDetails?.itemCount)
-            (playList?.contentDetails?.itemCount.toString()+" Video series").also { binding.tvSeries.text = it }
+            itemView.setOnClickListener{
+                clickListener(playList)
+            }
+            Log.d("tag", "titleSnip: ${playList.snippet.title}")
+
+            binding.tvHeader.text = playList.snippet.title
+            binding.imageView.load(playList.snippet.thumbnails.high.url)
+            // (playList.pageInfo.totalResults.toString()+" Video series").also { binding.tvSeries.text = it }
         }
     }
 }
