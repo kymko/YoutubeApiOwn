@@ -49,14 +49,13 @@ class PlayListActivity : BaseActivity<ActivityPlayListBinding>() {
 
     private fun clickListener(playListJs: PlayListJs.Item){
         Intent(this@PlayListActivity, DetailActivity::class.java).apply {
-            putExtra("key", playListJs.snippet.title)
+            putExtra(TITLE, playListJs.snippet.title)
+            putExtra(PLAY_LIST_ID, playListJs.id)
             startActivity(this)
         }
     }
 
-
     override fun showDisconnectState() {
-
 //        val networkConnection = NetworkConnection(this)
 //
 //        networkConnection.observe(this) { isConnected ->
@@ -68,10 +67,14 @@ class PlayListActivity : BaseActivity<ActivityPlayListBinding>() {
 //                binding.recyclerview.visibility = View.GONE
 //            }
 //        }
-
     }
 
     override fun inflateBinding(inflater: LayoutInflater): ActivityPlayListBinding {
         return ActivityPlayListBinding.inflate(layoutInflater)
+    }
+
+    companion object{
+        const val TITLE = "title"
+        const val PLAY_LIST_ID = "id"
     }
 }

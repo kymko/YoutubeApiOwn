@@ -60,6 +60,8 @@
             android:layout_toEndOf="@id/rl_image"
             android:layout_marginTop="9sp"
             android:fontFamily="@font/fjalla_one"
+            android:maxLines="2"
+            android:ellipsize="end"
             android:text="@string/headerText"
             android:textColor="#333333"
             android:textSize="16sp" />

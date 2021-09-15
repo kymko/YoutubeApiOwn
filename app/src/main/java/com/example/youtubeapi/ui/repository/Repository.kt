@@ -19,7 +19,7 @@ class Repository {
 
         emit(Resource.loading(null))
 
-        val response = youtubeApi.fetchAllPlayLists(Constants.PART, Constants.CHANNEL_ID, API_KEY, Constants.MAX_RESULT)
+        val response = youtubeApi.fetchAllPlayLists(Constants.PART, Constants.CHANNEL_ID, API_KEY)
 
         emit(
             if (response.isSuccessful)
@@ -29,11 +29,11 @@ class Repository {
         )
     }
 
-    fun fetchYoutubeApiPlayListItems():LiveData<Resource<PlayListItem>> = liveData(Dispatchers.IO){
+    fun fetchYoutubeApiPlayListItems(playListId:String):LiveData<Resource<PlayListItem>> = liveData(Dispatchers.IO){
 
         emit(Resource.loading(null))
 
-        val response = youtubeApi.fetchPlayListItems(Constants.PART, Constants.PLAY_LIST_ID,API_KEY,10)
+        val response = youtubeApi.fetchPlayListItems(Constants.PART,playListId,API_KEY)
 
         emit(
             if (response.isSuccessful)
@@ -42,5 +42,4 @@ class Repository {
                 Resource.error(response.message(), response.body(), response.code())
         )
     }
-
 }

@@ -1,6 +1,5 @@
 package com.example.youtubeapi.ui.detail.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +32,6 @@ class DetailAdapter(private val clickListener:(item:PlayListItem.Item)->Unit)
             playList.addAll(list)
         }
         notifyDataSetChanged()
-
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -45,11 +43,9 @@ class DetailAdapter(private val clickListener:(item:PlayListItem.Item)->Unit)
             itemView.setOnClickListener{
                 clickListener(playList)
             }
-            Log.d("tag", "titleSnip: ${playList.snippet.title}")
-
             binding.tvHeader.text = playList.snippet.title
             binding.imageView.load(playList.snippet.thumbnails.high.url)
-            // (playList.pageInfo.totalResults.toString()+" Video series").also { binding.tvSeries.text = it }
+            binding.tvPublished.text = playList.contentDetails.videoPublishedAt
         }
     }
 }

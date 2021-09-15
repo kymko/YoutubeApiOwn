@@ -11,14 +11,16 @@ import com.example.youtubeapi.core.ui.BaseActivity
 import com.example.youtubeapi.databinding.ActivityDetailBinding
 import com.example.youtubeapi.extensions.showToast
 import com.example.youtubeapi.model.PlayListItem
-import com.example.youtubeapi.model.PlayListJs
 import com.example.youtubeapi.ui.detail.adapter.DetailAdapter
 import com.example.youtubeapi.ui.player.PlayerActivity
+import com.example.youtubeapi.ui.playlist.PlayListActivity.Companion.PLAY_LIST_ID
+import com.example.youtubeapi.ui.playlist.PlayListActivity.Companion.TITLE
 
 class DetailActivity : BaseActivity<ActivityDetailBinding>() {
 
     private var viewModel: DetailViewModel? = null
     private val detailAdapter: DetailAdapter by lazy { DetailAdapter(this::clickListener) }
+    private var playListId: String? = null
 
     override fun setupUI() {
         viewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
@@ -30,15 +32,20 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
                 startActivity(this)
             }
         }
+        playListId = intent.getStringExtra(PLAY_LIST_ID)
     }
 
     override fun setupLiveData() {
 
-        viewModel?.fetchPlayListItems()?.observe(this, { response ->
+
+        viewModel?.fetchPlayListItems(playListId.toString())?.observe(this, { response ->
             when (response.status) {
                 Status.SUCCESS -> {
                     binding.progress.visibility = View.GONE
                     detailAdapter.addPlayList(response.data?.items)
+
+                    (response.data?.items?.size.toString() + " video series"
+                            ).also { binding.tvVideoSeriesPlay.text = it }
                 }
                 Status.ERROR -> {
                     binding.progress.visibility = View.GONE
@@ -50,11 +57,11 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
             }
         })
 
-        binding.included.recyclerviewPlay.apply {
+        binding.recyclerviewPlay.apply {
             layoutManager = LinearLayoutManager(this@DetailActivity)
             adapter = detailAdapter
         }
-        val string = intent.getStringExtra("key")
+        val string = intent.getStringExtra(TITLE)
         binding.tvHeaderPlay.text = string
 
     }
@@ -67,7 +74,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
         return ActivityDetailBinding.inflate(layoutInflater)
     }
 
-    private fun clickListener(items:PlayListItem.Item){
+    private fun clickListener(items: PlayListItem.Item) {
         showToast(items.id)
 
     }

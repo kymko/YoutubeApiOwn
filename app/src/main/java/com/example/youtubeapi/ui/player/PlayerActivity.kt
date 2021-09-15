@@ -8,24 +8,29 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.youtubeapi.R
 import com.example.youtubeapi.core.ui.BaseActivity
 import com.example.youtubeapi.databinding.ActivityPlayerBinding
-import com.example.youtubeapi.extensions.showToast
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.Util.getUserAgent
+import android.util.SparseArray
+import at.huber.youtubeExtractor.VideoMeta
+import at.huber.youtubeExtractor.YouTubeExtractor
+import at.huber.youtubeExtractor.YtFile
 
 class PlayerActivity : BaseActivity<ActivityPlayerBinding>() {
 
     private var viewModel:PlayerViewModel? = null
-
     private var mPlayer: SimpleExoPlayer? = null
     private var playWhenReady = true
     private var currentWindow = 0
     private var playbackPosition: Long = 0
+    private var urlVideo = ""
 
-    private val hlsUrl =
+    private val url =
         "https://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8"
+
+    private val youtubeLink = "http://youtube.com/watch?v=Bag1gUxuU0g"
 
     override fun setupUI() {
         viewModel = ViewModelProvider(this).get(PlayerViewModel::class.java)
@@ -33,11 +38,10 @@ class PlayerActivity : BaseActivity<ActivityPlayerBinding>() {
         binding.backContainer.setOnClickListener{
             finish()
         }
-
+        down()
     }
 
     override fun setupLiveData() {
-
 
     }
 
@@ -47,6 +51,20 @@ class PlayerActivity : BaseActivity<ActivityPlayerBinding>() {
 
     override fun inflateBinding(inflater: LayoutInflater): ActivityPlayerBinding {
         return ActivityPlayerBinding.inflate(layoutInflater)
+    }
+
+    private fun down() {
+
+        object : YouTubeExtractor(this) {
+            override fun onExtractionComplete(ytFiles: SparseArray<YtFile>?, vMeta: VideoMeta?) {
+                if (ytFiles != null) {
+                    val itag = 22
+                    val downloadUrl: String = ytFiles[itag].getUrl()
+                    urlVideo = downloadUrl
+                }
+            }
+        }.extract(youtubeLink)
+
     }
 
     private fun initPlayer(){
@@ -62,7 +80,6 @@ class PlayerActivity : BaseActivity<ActivityPlayerBinding>() {
         if (com.google.android.exoplayer2.util.Util.SDK_INT >= 24){
             initPlayer()
         }
-        showToast("start")
     }
 
     override fun onResume() {
@@ -71,7 +88,6 @@ class PlayerActivity : BaseActivity<ActivityPlayerBinding>() {
         if (com.google.android.exoplayer2.util.Util.SDK_INT < 24 || mPlayer == null){
             initPlayer()
         }
-        showToast("resume")
     }
 
     override fun onPause() {
@@ -79,7 +95,6 @@ class PlayerActivity : BaseActivity<ActivityPlayerBinding>() {
         if (com.google.android.exoplayer2.util.Util.SDK_INT < 24){
             releasePlayer()
         }
-        showToast("pause")
     }
 
     override fun onStop() {
@@ -87,7 +102,6 @@ class PlayerActivity : BaseActivity<ActivityPlayerBinding>() {
         if (com.google.android.exoplayer2.util.Util.SDK_INT < 24){
             releasePlayer()
         }
-        showToast("stop")
         mPlayer?.stop()
     }
 
@@ -120,7 +134,6 @@ class PlayerActivity : BaseActivity<ActivityPlayerBinding>() {
         )
 
         val dataSourceFactory = DefaultHttpDataSourceFactory(userAgent)
-        return HlsMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(hlsUrl))
+        return HlsMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(urlVideo))
     }
-
 }

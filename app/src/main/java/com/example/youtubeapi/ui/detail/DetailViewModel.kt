@@ -8,8 +8,7 @@ import com.example.youtubeapi.model.PlayListItem
 
 class DetailViewModel : ViewModel() {
 
-    fun fetchPlayListItems():LiveData<Resource<PlayListItem>>{
-        return App.repository.fetchYoutubeApiPlayListItems()
+    fun fetchPlayListItems(playListId:String):LiveData<Resource<PlayListItem>>{
+        return App.repository.fetchYoutubeApiPlayListItems(playListId)
     }
-
 }
