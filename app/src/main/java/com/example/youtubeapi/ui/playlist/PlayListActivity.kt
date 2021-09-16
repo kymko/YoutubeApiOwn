@@ -12,6 +12,7 @@ import com.example.youtubeapi.databinding.ActivityPlayListBinding
 import com.example.youtubeapi.model.PlayListJs
 import com.example.youtubeapi.ui.detail.DetailActivity
 import com.example.youtubeapi.ui.playlist.adapter.PlayListAdapter
+import com.example.youtubeapi.utils.CheckInternet
 
 class PlayListActivity : BaseActivity<ActivityPlayListBinding>() {
 
@@ -47,7 +48,7 @@ class PlayListActivity : BaseActivity<ActivityPlayListBinding>() {
         }
     }
 
-    private fun clickListener(playListJs: PlayListJs.Item){
+    private fun clickListener(playListJs: PlayListJs.Item) {
         Intent(this@PlayListActivity, DetailActivity::class.java).apply {
             putExtra(TITLE, playListJs.snippet.title)
             putExtra(PLAY_LIST_ID, playListJs.id)
@@ -56,18 +57,19 @@ class PlayListActivity : BaseActivity<ActivityPlayListBinding>() {
     }
 
     override fun showDisconnectState() {
-//        val networkConnection = NetworkConnection(this)
-//
-//        networkConnection.observe(this) { isConnected ->
-//            if (isConnected) {
-//                binding.layoutDisconnect.visibility = View.GONE
-//                binding.recyclerview.visibility = View.VISIBLE
-//            } else {
-//                binding.layoutDisconnect.visibility = View.VISIBLE
-//                binding.recyclerview.visibility = View.GONE
-//            }
-//        }
-    }
+
+
+        val networkConnection = CheckInternet(this)
+
+            if (networkConnection.available) {
+                binding.layoutDisconnect.visibility = View.GONE
+                binding.recyclerview.visibility = View.VISIBLE
+            } else {
+                binding.layoutDisconnect.visibility = View.VISIBLE
+                binding.recyclerview.visibility = View.GONE
+            }
+        }
+
 
     override fun inflateBinding(inflater: LayoutInflater): ActivityPlayListBinding {
         return ActivityPlayListBinding.inflate(layoutInflater)

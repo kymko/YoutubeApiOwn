@@ -12,13 +12,13 @@ android {
         targetSdk 30
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
 
         buildConfigField "String", "BASE_URL","\"https://www.googleapis.com/youtube/v3/\""
         buildConfigField "String", "API_KEY","\"AIzaSyCEt0-kv2OROcQDa0d_HXbZxByKZU9POd0\""
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
 
     buildTypes {
         release {
@@ -38,7 +38,6 @@ android {
     buildFeatures {
         viewBinding = true
     }
-
 }
 
 dependencies {
@@ -82,4 +81,6 @@ dependencies {
     // interceptor
     implementation "com.squareup.okhttp3:logging-interceptor:4.9.1"
 
+    // Multi Dex enable
+    implementation "androidx.multidex:multidex:2.0.1"
 }

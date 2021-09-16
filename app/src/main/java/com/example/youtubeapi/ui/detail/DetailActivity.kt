@@ -1,6 +1,7 @@
 package com.example.youtubeapi.ui.detail
 
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
@@ -9,12 +10,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.youtubeapi.core.network.Status
 import com.example.youtubeapi.core.ui.BaseActivity
 import com.example.youtubeapi.databinding.ActivityDetailBinding
-import com.example.youtubeapi.extensions.showToast
 import com.example.youtubeapi.model.PlayListItem
 import com.example.youtubeapi.ui.detail.adapter.DetailAdapter
 import com.example.youtubeapi.ui.player.PlayerActivity
 import com.example.youtubeapi.ui.playlist.PlayListActivity.Companion.PLAY_LIST_ID
 import com.example.youtubeapi.ui.playlist.PlayListActivity.Companion.TITLE
+import javax.security.auth.DestroyFailedException
 
 class DetailActivity : BaseActivity<ActivityDetailBinding>() {
 
@@ -36,7 +37,6 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     }
 
     override fun setupLiveData() {
-
 
         viewModel?.fetchPlayListItems(playListId.toString())?.observe(this, { response ->
             when (response.status) {
@@ -75,7 +75,19 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     }
 
     private fun clickListener(items: PlayListItem.Item) {
-        showToast(items.id)
 
+        Intent(this,PlayerActivity::class.java).apply {
+            putExtra(VIDEO_ID,items.snippet.resourceId.videoId)
+            putExtra(TITLE,items.snippet.title)
+            putExtra(DESCRIPTION,items.snippet.description)
+            startActivity(this)
+        }
+        Log.d("tag", "videoId: $items.snippet.resourceId.videoId")
+
+    }
+    companion object{
+        const val VIDEO_ID = "video"
+        const val TITLE  = "title"
+        const val DESCRIPTION = "description"
     }
 }

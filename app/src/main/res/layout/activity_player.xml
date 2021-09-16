@@ -70,11 +70,10 @@
         android:layout_below="@+id/toolbar"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="90dp"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_under_text"
+        android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/exo_player"
@@ -90,7 +89,7 @@
         android:id="@+id/card_view"
         android:layout_width="142dp"
         android:layout_height="41dp"
-        android:layout_below="@+id/tv_under_text"
+        android:layout_below="@+id/tv_title"
         android:layout_marginStart="16dp"
         android:layout_marginTop="11dp"
         app:cardCornerRadius="10dp"
@@ -126,8 +125,9 @@
     </com.google.android.material.card.MaterialCardView>
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/tv_desc"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
         android:layout_below="@+id/card_view"
         android:layout_marginStart="16sp"
         android:layout_marginTop="16sp"
