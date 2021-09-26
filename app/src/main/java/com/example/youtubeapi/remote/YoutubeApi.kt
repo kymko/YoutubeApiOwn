@@ -1,4 +1,4 @@
-package com.example.youtubeapi.network
+package com.example.youtubeapi.remote
 
 import com.example.youtubeapi.model.PlayListJs
 import com.example.youtubeapi.model.PlayListItem

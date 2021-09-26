@@ -4,28 +4,28 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.youtubeapi.core.network.Status
 import com.example.youtubeapi.core.ui.BaseActivity
 import com.example.youtubeapi.databinding.ActivityPlayListBinding
+import com.example.youtubeapi.extensions.showToast
 import com.example.youtubeapi.model.PlayListJs
 import com.example.youtubeapi.ui.detail.DetailActivity
 import com.example.youtubeapi.ui.playlist.adapter.PlayListAdapter
-import com.example.youtubeapi.utils.CheckInternet
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlayListActivity : BaseActivity<ActivityPlayListBinding>() {
 
-    private var viewModel: PlayListViewModel? = null
+    private val viewModel: PlayListViewModel by viewModel()
+
     private val playListAdapter: PlayListAdapter by lazy { PlayListAdapter(this::clickListener) }
 
     override fun setupUI() {
-        viewModel = ViewModelProvider(this).get(PlayListViewModel::class.java)
     }
 
     override fun setupLiveData() {
 
-        viewModel?.fetchAllPlayLists()?.observe(this) {
+        viewModel.fetchAllPlayLists().observe(this) {
 
             when (it.status) {
                 Status.SUCCESS -> {
@@ -58,25 +58,24 @@ class PlayListActivity : BaseActivity<ActivityPlayListBinding>() {
 
     override fun showDisconnectState() {
 
-
-        val networkConnection = CheckInternet(this)
-
-            if (networkConnection.available) {
-                binding.layoutDisconnect.visibility = View.GONE
-                binding.recyclerview.visibility = View.VISIBLE
-            } else {
-                binding.layoutDisconnect.visibility = View.VISIBLE
-                binding.recyclerview.visibility = View.GONE
-            }
+        if (!internetAvailable) {
+            binding.layoutDisconnect.visibility = View.VISIBLE
+            binding.recyclerview.visibility = View.GONE
+            showToast("internet not available")
+        } else {
+            binding.layoutDisconnect.visibility = View.GONE
+            binding.recyclerview.visibility = View.VISIBLE
         }
+    }
 
 
     override fun inflateBinding(inflater: LayoutInflater): ActivityPlayListBinding {
         return ActivityPlayListBinding.inflate(layoutInflater)
     }
 
-    companion object{
+    companion object {
         const val TITLE = "title"
         const val PLAY_LIST_ID = "id"
     }
+
 }

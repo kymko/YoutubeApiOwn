@@ -17,4 +17,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="how_long_video">4:12</string>
     <string name="series">video series</string>
+    <string name="string_720p">720p</string>
+    <string name="string_1080p">1080p</string>
+    <string name="string_480p">480p</string>
 </resources>

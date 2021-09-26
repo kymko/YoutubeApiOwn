@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/alert_dialog_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="20dp">
+
+        <RadioGroup
+            android:id="@+id/radio_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/btn_1080p"
+                android:buttonTint="#FF0000"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <RadioButton
+                android:id="@+id/btn_720p"
+                android:buttonTint="#FF0000"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <RadioButton
+                android:id="@+id/btn_480p"
+                android:buttonTint="#FF0000"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RadioGroup>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_1080"
+            style="@style/Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_toEndOf="@+id/radio_group"
+            android:text="@string/string_1080p" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_720"
+            style="@style/Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_1080"
+            android:layout_marginTop="9dp"
+            android:layout_toEndOf="@+id/radio_group"
+            android:text="@string/string_720p" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_480"
+            style="@style/Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_720"
+            android:layout_marginTop="9dp"
+            android:layout_toEndOf="@+id/radio_group"
+            android:text="@string/string_480p" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_download"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_480"
+            android:layout_marginTop="16dp"
+            android:background="#FF0000"
+            android:text="@string/download"
+            android:textAllCaps="false"
+            android:textColor="@color/white" />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

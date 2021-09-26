@@ -17,6 +17,7 @@ class DetailAdapter(private val clickListener:(item:PlayListItem.Item)->Unit)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         binding = ListDetailBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding.root)
+
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

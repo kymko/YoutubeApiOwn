@@ -1,17 +1,20 @@
 package com.example.youtubeapi.ui.player
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.view.LayoutInflater
-import android.view.View
-import androidx.lifecycle.ViewModelProvider
 import com.example.youtubeapi.core.ui.BaseActivity
 import com.example.youtubeapi.databinding.ActivityPlayerBinding
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.MediaSource
 import android.util.SparseArray
+import android.view.View
 import at.huber.youtubeExtractor.VideoMeta
 import at.huber.youtubeExtractor.YouTubeExtractor
 import at.huber.youtubeExtractor.YtFile
+import com.example.youtubeapi.R
+import com.example.youtubeapi.databinding.DownloadDialogBinding
+import com.example.youtubeapi.extensions.showToast
 import com.example.youtubeapi.ui.detail.DetailActivity.Companion.DESCRIPTION
 import com.example.youtubeapi.ui.detail.DetailActivity.Companion.TITLE
 import com.example.youtubeapi.ui.detail.DetailActivity.Companion.VIDEO_ID
@@ -19,28 +22,54 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.source.MergingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
+@SuppressLint("StaticFieldLeak")
 class PlayerActivity : BaseActivity<ActivityPlayerBinding>() {
 
-    private var viewModel: PlayerViewModel? = null
-
+    private val viewModel: PlayerViewModel by viewModel()
+    private lateinit var dialogBinding: DownloadDialogBinding
     private var mPlayer: SimpleExoPlayer? = null
     private var playWhenReady = true
     private var currentWindow = 0
     private var playbackPosition: Long = 0
-    private var videoId:String? = null
+    private var videoId: String? = null
 
     override fun setupUI() {
 
-        viewModel = ViewModelProvider(this).get(PlayerViewModel::class.java)
-        binding.backContainer.setOnClickListener {
-            finish()
-        }
+        binding.backContainer.setOnClickListener { finish() }
+
         initPlayer()
+
         val title = intent.getStringExtra(TITLE)
         val desc = intent.getStringExtra(DESCRIPTION)
         binding.tvTitle.text = title
         binding.tvDesc.text = desc
+
+        binding.cardView.setOnClickListener {
+
+            dialogBinding = DownloadDialogBinding.inflate(LayoutInflater.from(this))
+            val view: View = dialogBinding.root
+            val mBuilder = AlertDialog.Builder(this, R.style.CustomAlertDialog)
+                .setView(view)
+                .setTitle("Select video quality")
+            val mAlertDialog = mBuilder.show()
+
+            dialogBinding.btnDownload.setOnClickListener {
+
+                when (val checkRadioButton = dialogBinding.radioGroup.checkedRadioButtonId) {
+                    -1 -> {
+                        showToast("Nothing selected!")
+                    }
+                    else -> {
+                        showToast(checkRadioButton.toString())
+                    }
+
+                }
+
+                mAlertDialog.dismiss()
+            }
+        }
     }
 
     override fun setupLiveData() {
@@ -51,10 +80,6 @@ class PlayerActivity : BaseActivity<ActivityPlayerBinding>() {
 
     }
 
-    override fun inflateBinding(inflater: LayoutInflater): ActivityPlayerBinding {
-        return ActivityPlayerBinding.inflate(layoutInflater)
-    }
-
     private fun initPlayer() {
 
         mPlayer = SimpleExoPlayer.Builder(this).build()
@@ -63,14 +88,18 @@ class PlayerActivity : BaseActivity<ActivityPlayerBinding>() {
         val youtubeLink = "http://youtube.com/watch?v=$videoId"
 
         object : YouTubeExtractor(this) {
-            override fun onExtractionComplete(ytFiles: SparseArray<YtFile>?, vMeta: VideoMeta?) {
+
+            override fun onExtractionComplete(
+                ytFiles: SparseArray<YtFile>?,
+                vMeta: VideoMeta?,
+            ) {
 
                 if (ytFiles != null) {
                     val itag = 137
                     val audioTag = 140
                     val videoUrl = ytFiles[itag].url
                     val audioUrl = ytFiles[audioTag].url
-                    val audioSourse: MediaSource =
+                    val audioSource: MediaSource =
                         ProgressiveMediaSource.Factory(DefaultHttpDataSource.Factory())
                             .createMediaSource(
                                 MediaItem.fromUri(audioUrl)
@@ -81,7 +110,7 @@ class PlayerActivity : BaseActivity<ActivityPlayerBinding>() {
                                 MediaItem.fromUri(videoUrl)
                             )
                     mPlayer?.setMediaSource(
-                        MergingMediaSource(true, videoSource, audioSourse),
+                        MergingMediaSource(true, videoSource, audioSource),
                         true
                     )
                     mPlayer?.prepare()
@@ -94,42 +123,24 @@ class PlayerActivity : BaseActivity<ActivityPlayerBinding>() {
 
     override fun onStart() {
         super.onStart()
-        if (com.google.android.exoplayer2.util.Util.SDK_INT >= 24) {
-            initPlayer()
-        }
+        initPlayer()
     }
 
     override fun onResume() {
         super.onResume()
-        if (com.google.android.exoplayer2.util.Util.SDK_INT < 24 || mPlayer == null) {
-            initPlayer()
-            hideSystemUi()
-        }
-    }
-
-    @SuppressLint("InlinedApi")
-    private fun hideSystemUi() {
-        binding.exoPlayer.systemUiVisibility = (
-                View.SYSTEM_UI_FLAG_LOW_PROFILE
-                        or View.SYSTEM_UI_FLAG_FULLSCREEN
-                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
+        initPlayer()
     }
 
     override fun onPause() {
         super.onPause()
-        if (com.google.android.exoplayer2.util.Util.SDK_INT < 24) {
-            releasePlayer()
-        }
+        releasePlayer()
     }
 
     override fun onStop() {
-        if (com.google.android.exoplayer2.util.Util.SDK_INT < 24) {
-            releasePlayer()
-            super.onStop()
-        }
+        releasePlayer()
+        super.onStop()
+        mPlayer?.stop()
+
     }
 
     private fun releasePlayer() {
@@ -140,5 +151,9 @@ class PlayerActivity : BaseActivity<ActivityPlayerBinding>() {
             mPlayer!!.release()
             mPlayer = null
         }
+    }
+
+    override fun inflateBinding(inflater: LayoutInflater): ActivityPlayerBinding {
+        return ActivityPlayerBinding.inflate(layoutInflater)
     }
 }

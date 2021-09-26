@@ -4,12 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
+import com.example.youtubeapi.utils.CheckInternet
 
-abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity(){
+abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
 
     protected lateinit var binding: VB
 
-    protected abstract fun inflateBinding(inflater:LayoutInflater): VB
+    protected abstract fun inflateBinding(inflater: LayoutInflater): VB
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +22,11 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity(){
         setupLiveData()
         showDisconnectState()
 
+    }
+
+    val internetAvailable: Boolean
+    get(){
+        return CheckInternet(context = this).available
     }
 
     abstract fun setupUI() // внутри этого метода мы иниц все view

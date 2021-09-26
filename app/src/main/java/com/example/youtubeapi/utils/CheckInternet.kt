@@ -1,16 +1,15 @@
 package com.example.youtubeapi.utils
 
-import android.annotation.SuppressLint
 import android.content.Context
+import android.annotation.SuppressLint
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.NetworkInfo
 import android.os.Build
 
-class CheckInternet(private val context: Context?) {
+class CheckInternet(private val context: Context) {
 
-    var available:Boolean = true
-
+    val available: Boolean
         @SuppressLint("MissingPermission")
         get() {
             if (context == null) return false
@@ -28,7 +27,6 @@ class CheckInternet(private val context: Context?) {
                 else -> {
                     val info = cm.allNetworkInfo
                     for (i in info.indices) info[i].state == NetworkInfo.State.CONNECTED
-                    available = false
                     false
                 }
             }

@@ -7,8 +7,8 @@ import com.example.youtubeapi.utils.Constants
 import com.example.youtubeapi.core.network.Resource
 import com.example.youtubeapi.model.PlayListItem
 import com.example.youtubeapi.model.PlayListJs
-import com.example.youtubeapi.network.RetrofitClient
-import com.example.youtubeapi.network.YoutubeApi
+import com.example.youtubeapi.remote.RetrofitClient
+import com.example.youtubeapi.remote.YoutubeApi
 import kotlinx.coroutines.Dispatchers
 
 class Repository {

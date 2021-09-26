@@ -5,11 +5,12 @@ import androidx.lifecycle.ViewModel
 import com.example.youtubeapi.App
 import com.example.youtubeapi.core.network.Resource
 import com.example.youtubeapi.model.PlayListJs
+import com.example.youtubeapi.ui.repository.Repository
 
-class PlayListViewModel : ViewModel() {
+class PlayListViewModel(private val repository: Repository) : ViewModel() {
 
     fun fetchAllPlayLists(): LiveData<Resource<PlayListJs>> {
-        return App.repository.fetchYoutubeApiPlayList()
+        return repository.fetchYoutubeApiPlayList()
     }
 
 

@@ -14,8 +14,8 @@ android {
         versionName "1.0"
         multiDexEnabled true
 
-        buildConfigField "String", "BASE_URL","\"https://www.googleapis.com/youtube/v3/\""
-        buildConfigField "String", "API_KEY","\"AIzaSyCEt0-kv2OROcQDa0d_HXbZxByKZU9POd0\""
+        buildConfigField "String", "BASE_URL", "\"https://www.googleapis.com/youtube/v3/\""
+        buildConfigField "String", "API_KEY", "\"AIzaSyCEt0-kv2OROcQDa0d_HXbZxByKZU9POd0\""
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -83,4 +83,8 @@ dependencies {
 
     // Multi Dex enable
     implementation "androidx.multidex:multidex:2.0.1"
+
+    //Koin
+    implementation "org.koin:koin-core:2.2.2"
+    implementation "org.koin:koin-androidx-viewmodel:2.2.2"
 }

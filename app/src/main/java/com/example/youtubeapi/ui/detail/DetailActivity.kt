@@ -5,26 +5,25 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.youtubeapi.core.network.Status
 import com.example.youtubeapi.core.ui.BaseActivity
 import com.example.youtubeapi.databinding.ActivityDetailBinding
+import com.example.youtubeapi.extensions.showToast
 import com.example.youtubeapi.model.PlayListItem
 import com.example.youtubeapi.ui.detail.adapter.DetailAdapter
 import com.example.youtubeapi.ui.player.PlayerActivity
 import com.example.youtubeapi.ui.playlist.PlayListActivity.Companion.PLAY_LIST_ID
-import com.example.youtubeapi.ui.playlist.PlayListActivity.Companion.TITLE
-import javax.security.auth.DestroyFailedException
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DetailActivity : BaseActivity<ActivityDetailBinding>() {
 
-    private var viewModel: DetailViewModel? = null
+    private val viewModel: DetailViewModel by viewModel()
+
     private val detailAdapter: DetailAdapter by lazy { DetailAdapter(this::clickListener) }
     private var playListId: String? = null
 
     override fun setupUI() {
-        viewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
         binding.backContainer.setOnClickListener {
             finish()
         }
@@ -38,7 +37,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
 
     override fun setupLiveData() {
 
-        viewModel?.fetchPlayListItems(playListId.toString())?.observe(this, { response ->
+        viewModel.fetchPlayListItems(playListId.toString()).observe(this, { response ->
             when (response.status) {
                 Status.SUCCESS -> {
                     binding.progress.visibility = View.GONE
@@ -68,6 +67,16 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
 
     override fun showDisconnectState() {
 
+
+        if (!internetAvailable) {
+            binding.layoutDisconnect.visibility = View.VISIBLE
+            binding.appBar.visibility = View.GONE
+            showToast("internet not available")
+        } else {
+            binding.layoutDisconnect.visibility = View.GONE
+            binding.appBar.visibility = View.VISIBLE
+        }
+
     }
 
     override fun inflateBinding(inflater: LayoutInflater): ActivityDetailBinding {
@@ -76,18 +85,19 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
 
     private fun clickListener(items: PlayListItem.Item) {
 
-        Intent(this,PlayerActivity::class.java).apply {
-            putExtra(VIDEO_ID,items.snippet.resourceId.videoId)
-            putExtra(TITLE,items.snippet.title)
-            putExtra(DESCRIPTION,items.snippet.description)
+        Intent(this, PlayerActivity::class.java).apply {
+            putExtra(VIDEO_ID, items.snippet.resourceId.videoId)
+            putExtra(TITLE, items.snippet.title)
+            putExtra(DESCRIPTION, items.snippet.description)
             startActivity(this)
         }
         Log.d("tag", "videoId: $items.snippet.resourceId.videoId")
 
     }
-    companion object{
+
+    companion object {
         const val VIDEO_ID = "video"
-        const val TITLE  = "title"
+        const val TITLE = "title"
         const val DESCRIPTION = "description"
     }
 }
