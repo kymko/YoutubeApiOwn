@@ -37,7 +37,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
 
     override fun setupLiveData() {
 
-        viewModel.fetchPlayListItems(playListId.toString()).observe(this, { response ->
+        viewModel.fetchPlayListItems(playListId.toString()).observe(this) { response ->
             when (response.status) {
                 Status.SUCCESS -> {
                     binding.progress.visibility = View.GONE
@@ -54,7 +54,7 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
                     binding.progress.visibility = View.VISIBLE
                 }
             }
-        })
+        }
 
         binding.recyclerviewPlay.apply {
             layoutManager = LinearLayoutManager(this@DetailActivity)

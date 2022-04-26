@@ -1,10 +1,10 @@
 package com.example.youtubeapi.ui.playlist
 
 import android.content.Intent
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.youtubeapi.R
 import com.example.youtubeapi.core.network.Status
 import com.example.youtubeapi.core.ui.BaseActivity
 import com.example.youtubeapi.databinding.ActivityPlayListBinding
@@ -18,9 +18,16 @@ class PlayListActivity : BaseActivity<ActivityPlayListBinding>() {
 
     private val viewModel: PlayListViewModel by viewModel()
 
-    private val playListAdapter: PlayListAdapter by lazy { PlayListAdapter(this::clickListener) }
+    private lateinit var playListAdapter:PlayListAdapter
+
+    private var mainMenu: Menu? = null
 
     override fun setupUI() {
+        playListAdapter = PlayListAdapter( this::showDeleteMenu,this::click)
+        binding.recyclerview.apply {
+            layoutManager = LinearLayoutManager(this@PlayListActivity)
+            adapter = playListAdapter
+        }
     }
 
     override fun setupLiveData() {
@@ -42,18 +49,6 @@ class PlayListActivity : BaseActivity<ActivityPlayListBinding>() {
             }
         }
 
-        binding.recyclerview.apply {
-            layoutManager = LinearLayoutManager(this@PlayListActivity)
-            adapter = playListAdapter
-        }
-    }
-
-    private fun clickListener(playListJs: PlayListJs.Item) {
-        Intent(this@PlayListActivity, DetailActivity::class.java).apply {
-            putExtra(TITLE, playListJs.snippet.title)
-            putExtra(PLAY_LIST_ID, playListJs.id)
-            startActivity(this)
-        }
     }
 
     override fun showDisconnectState() {
@@ -68,6 +63,13 @@ class PlayListActivity : BaseActivity<ActivityPlayListBinding>() {
         }
     }
 
+    private fun click(item:List<PlayListJs.Item>,position:Int){
+        Intent(this@PlayListActivity, DetailActivity::class.java).apply {
+            putExtra(TITLE, item[position].snippet.title)
+            putExtra(PLAY_LIST_ID, item[position].id)
+            startActivity(this)
+        }
+    }
 
     override fun inflateBinding(inflater: LayoutInflater): ActivityPlayListBinding {
         return ActivityPlayListBinding.inflate(layoutInflater)
@@ -76,6 +78,27 @@ class PlayListActivity : BaseActivity<ActivityPlayListBinding>() {
     companion object {
         const val TITLE = "title"
         const val PLAY_LIST_ID = "id"
+    }
+
+    private fun showDeleteMenu(show: Boolean) {
+        mainMenu?.findItem(R.id.mDelete)?.isVisible = show
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        mainMenu = menu
+        menuInflater.inflate(R.menu.custom_menu, mainMenu)
+        showDeleteMenu(false)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.mDelete -> {
+//                delete()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+
     }
 
 }

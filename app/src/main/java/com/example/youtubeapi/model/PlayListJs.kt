@@ -12,7 +12,8 @@ data class PlayListJs(
         val etag: String, // qe0g-E6pHQEdejBgnySmHjbAHpg
         val id: String, // PLMFUaRAk0WsbJZuURpDP4_ISBuw5UvJXq
         val kind: String, // youtube#playlist
-        val snippet: Snippet
+        val snippet: Snippet,
+        var isSelected:Boolean
     ) {
         data class ContentDetails(
             val itemCount: Int // 11
